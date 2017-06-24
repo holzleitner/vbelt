@@ -103,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
     private MqttCallback mqttCallback = new MqttCallback() {
         @Override
         public void connectionLost(Throwable cause) {
-            Toast.makeText(getApplicationContext(), R.string.connection_lost, Toast.LENGTH_SHORT).show();
+            int message = cause == null ? R.string.disconnected : R.string.connection_lost;
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             updateUI(false);
         }
 
