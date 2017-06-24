@@ -1,5 +1,6 @@
 package at.tripwire.vbelt;
 
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.EditText;
@@ -7,6 +8,7 @@ import android.widget.Toast;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -22,6 +24,9 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class MainActivity extends AppCompatActivity {
 
     private static final String BROKER_URI = "tcp://iot.soft.uni-linz.ac.at:1883";
+
+    @SystemService
+    protected Vibrator vibrator;
 
     @ViewById(R.id.position)
     protected EditText positionEditText;
@@ -81,8 +86,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
-            Log.i(getString(R.string.app_name), new String(message.getPayload()));
-            // TODO vibrate
+            String distance = new String(message.getPayload());
+            Log.i(getString(R.string.app_name), "distance received: " + distance);
+
+            long[] pattern = VibrationPattern.getPattern(Integer.parseInt(distance));
+            if (pattern != null && vibrator.hasVibrator()) {
+                vibrator.vibrate(pattern, -1);
+            }
         }
 
         @Override
