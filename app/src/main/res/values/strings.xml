@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">VBelt</string>
+    <string name="position">Position</string>
+    <string name="connect">Connect</string>
 </resources>
