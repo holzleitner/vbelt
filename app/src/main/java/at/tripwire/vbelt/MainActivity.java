@@ -9,7 +9,9 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -37,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
             mqttConnectOptions.setCleanSession(false);
 
             try {
-                mqttAndroidClient.connect(mqttConnectOptions);
-                subscribeToTopic(position);
+                mqttAndroidClient.connect(mqttConnectOptions, mqttActionListener);
             } catch (MqttException e) {
                 String message = getString(R.string.failed_to_connect);
                 Log.e(getString(R.string.app_name), message, e);
@@ -49,11 +50,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void subscribeToTopic(String topic) throws MqttException {
-        if (mqttAndroidClient != null && mqttAndroidClient.isConnected()) {
-            mqttAndroidClient.subscribe(topic, 0);
+    private IMqttActionListener mqttActionListener = new IMqttActionListener() {
+        @Override
+        public void onSuccess(IMqttToken asyncActionToken) {
+            Toast.makeText(MainActivity.this, R.string.connected, Toast.LENGTH_SHORT).show();
+            try {
+                mqttAndroidClient.subscribe(positionEditText.getText().toString(), 0);
+            } catch (MqttException e) {
+                handleSubscriptionFailure(e);
+            }
         }
-    }
+
+        @Override
+        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            handleSubscriptionFailure(exception);
+        }
+
+        private void handleSubscriptionFailure(Throwable e) {
+            String message = getString(R.string.failed_to_subscribe);
+            Log.e(getString(R.string.app_name), message, e);
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+    };
 
     private MqttCallback mqttCallback = new MqttCallback() {
         @Override
@@ -64,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
             Log.i(getString(R.string.app_name), new String(message.getPayload()));
+            // TODO vibrate
         }
 
         @Override
