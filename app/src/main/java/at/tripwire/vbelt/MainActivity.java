@@ -3,6 +3,7 @@ package at.tripwire.vbelt;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -31,28 +32,47 @@ public class MainActivity extends AppCompatActivity {
     @ViewById(R.id.position)
     protected EditText positionEditText;
 
+    @ViewById(R.id.connect)
+    protected Button connectButton;
+
     private MqttAndroidClient mqttAndroidClient;
 
     @Click(R.id.connect)
     protected void connectClicked() {
-        String position = positionEditText.getText().toString();
-        if (!position.isEmpty()) {
-            mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), BROKER_URI, MqttClient.generateClientId());
-            mqttAndroidClient.setCallback(mqttCallback);
+        if (mqttAndroidClient == null) {
+            String position = positionEditText.getText().toString();
+            if (!position.isEmpty()) {
+                mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), BROKER_URI, MqttClient.generateClientId());
+                mqttAndroidClient.setCallback(mqttCallback);
 
-            MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
-            mqttConnectOptions.setCleanSession(false);
+                MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+                mqttConnectOptions.setCleanSession(false);
 
-            try {
-                mqttAndroidClient.connect(mqttConnectOptions, mqttActionListener);
-            } catch (MqttException e) {
-                String message = getString(R.string.failed_to_connect);
-                Log.e(getString(R.string.app_name), message, e);
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                try {
+                    mqttAndroidClient.connect(mqttConnectOptions, mqttActionListener);
+                } catch (MqttException e) {
+                    String message = getString(R.string.failed_to_connect);
+                    Log.e(getString(R.string.app_name), message, e);
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, R.string.no_position_given, Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, R.string.no_position_given, Toast.LENGTH_SHORT).show();
+            try {
+                mqttAndroidClient.disconnect();
+                mqttAndroidClient = null;
+            } catch (MqttException e) {
+                Log.e(getString(R.string.app_name), "Failed to disconnect", e);
+            } finally {
+                updateUI(false);
+            }
         }
+    }
+
+    private void updateUI(boolean connected) {
+        positionEditText.setEnabled(!connected);
+        connectButton.setText(connected ? R.string.disconnect : R.string.connect);
     }
 
     private IMqttActionListener mqttActionListener = new IMqttActionListener() {
@@ -61,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, R.string.connected, Toast.LENGTH_SHORT).show();
             try {
                 mqttAndroidClient.subscribe(positionEditText.getText().toString(), 0);
+                updateUI(true);
             } catch (MqttException e) {
                 handleSubscriptionFailure(e);
             }
@@ -75,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             String message = getString(R.string.failed_to_subscribe);
             Log.e(getString(R.string.app_name), message, e);
             Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+            updateUI(false);
         }
     };
 
@@ -82,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void connectionLost(Throwable cause) {
             Toast.makeText(getApplicationContext(), R.string.connection_lost, Toast.LENGTH_SHORT).show();
+            updateUI(false);
         }
 
         @Override
