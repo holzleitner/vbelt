@@ -2,4 +2,8 @@
     <string name="app_name">VBelt</string>
     <string name="position">Position</string>
     <string name="connect">Connect</string>
+    <string name="no_position_given">No position given!</string>
+    <string name="service_started">Service started!</string>
+    <string name="failed_to_connect">Failed to connect to the MQTT broker…</string>
+    <string name="connection_lost">Connection lost…</string>
 </resources>
