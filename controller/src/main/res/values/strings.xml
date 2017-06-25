@@ -5,4 +5,5 @@
     <string name="navigate">Navigate</string>
     <string name="fill_out_destination">Fill out the destination field!</string>
     <string name="current_location">Current location</string>
+    <string name="points">Points</string>
 </resources>
