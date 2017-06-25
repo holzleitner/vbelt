@@ -15,8 +15,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.androidannotations.annotations.AfterViews;
@@ -51,11 +49,7 @@ public class NavigationActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationProviderClient;
 
-    private SettingsClient settingsClient;
-
     private LocationRequest locationRequest;
-
-    private LocationSettingsRequest locationSettingsRequest;
 
     @AfterViews
     protected void init() {
@@ -66,16 +60,11 @@ public class NavigationActivity extends AppCompatActivity {
             }
         }
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        settingsClient = LocationServices.getSettingsClient(this);
 
         locationRequest = new LocationRequest();
         locationRequest.setInterval(UPDATE_INTERVAL);
         locationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(locationRequest);
-        locationSettingsRequest = builder.build();
     }
 
     @Override
