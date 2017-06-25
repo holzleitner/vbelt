@@ -14,13 +14,16 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.rest.spring.annotations.RestService;
+
+import java.util.List;
 
 @EActivity(R.layout.activity_navigation)
 public class NavigationActivity extends AppCompatActivity {
@@ -33,8 +36,8 @@ public class NavigationActivity extends AppCompatActivity {
     @ViewById(R.id.points)
     protected TextView pointsTextView;
 
-    @RestService
-    protected MapsClient mapsClient;
+    @Bean
+    protected RouteFacade routeFacade;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -79,17 +82,27 @@ public class NavigationActivity extends AppCompatActivity {
 
     @Background
     protected void loadRoutePoints(Location currentLocation) {
-        String route = mapsClient.getRoutePoints(Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()), "48.2643454", "13.9280544");
-        showPoints(route);
+        List<LatLng> points = routeFacade.getPoints(Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()), "48.2643454", "13.9280544");
+        showPoints(points);
     }
 
     @UiThread
-    protected void showPoints(String route) {
-        pointsTextView.setText(route);
+    protected void showPoints(List<LatLng> points) {
+        if (points != null) {
+            StringBuilder builder = new StringBuilder();
+            for (LatLng p : points) {
+                builder.append("latitude: ");
+                builder.append(p.latitude);
+                builder.append(", longitude: ");
+                builder.append(p.longitude);
+                builder.append("\n");
+            }
+            pointsTextView.setText(builder.toString());
+        }
     }
 
     @UiThread
     protected void updateUI(Location location) {
-        locationTextView.setText(location.toString());
+        locationTextView.setText("latitude: " + location.getLatitude() + ", longitude: " + location.getLongitude());
     }
 }
