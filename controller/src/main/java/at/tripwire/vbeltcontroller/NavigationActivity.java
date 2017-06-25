@@ -39,6 +39,9 @@ public class NavigationActivity extends AppCompatActivity {
     @Bean
     protected RouteFacade routeFacade;
 
+    @Bean
+    protected ActionBroadcaster actionBroadcaster;
+
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     @AfterViews
@@ -58,6 +61,7 @@ public class NavigationActivity extends AppCompatActivity {
         // start location updates
         try {
             fusedLocationProviderClient.requestLocationUpdates(LocationRequest.create(), locationCallback, null);
+            actionBroadcaster.connect();
         } catch (SecurityException e) {
             Log.e(getString(R.string.app_name), "Failed to request the current location.", e);
         }
@@ -68,17 +72,8 @@ public class NavigationActivity extends AppCompatActivity {
         super.onPause();
         // stop location updates
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        actionBroadcaster.disconnect();
     }
-
-    private LocationCallback locationCallback = new LocationCallback() {
-
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            Location currentLocation = locationResult.getLastLocation();
-            loadRoutePoints(currentLocation);
-            updateUI(currentLocation);
-        }
-    };
 
     @Background
     protected void loadRoutePoints(Location currentLocation) {
@@ -105,4 +100,18 @@ public class NavigationActivity extends AppCompatActivity {
     protected void updateUI(Location location) {
         locationTextView.setText("latitude: " + location.getLatitude() + ", longitude: " + location.getLongitude());
     }
+
+    private LocationCallback locationCallback = new LocationCallback() {
+
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location currentLocation = locationResult.getLastLocation();
+            loadRoutePoints(currentLocation);
+            updateUI(currentLocation);
+
+            if (actionBroadcaster.isConnected()) {
+                actionBroadcaster.publish("left", "100");
+            }
+        }
+    };
 }
