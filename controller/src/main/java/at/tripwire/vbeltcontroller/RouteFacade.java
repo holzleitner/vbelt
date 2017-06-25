@@ -1,10 +1,12 @@
 package at.tripwire.vbeltcontroller;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.rest.spring.annotations.RestService;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +20,9 @@ public class RouteFacade {
 
     @RestService
     protected RouteClient routeClient;
+
+    @RootContext
+    protected Context context;
 
     public List<LatLng> getPoints(String srcLat, String srcLon, String destLat, String destLon) {
         String content = routeClient.getPoints(srcLat, srcLon, destLat, destLon);
@@ -46,7 +51,7 @@ public class RouteFacade {
             }
             return geoPoints;
         } catch (JSONException e) {
-            Log.e(RouteFacade.class.getSimpleName(), "Error loading route points.", e);
+            Log.e(context.getString(R.string.app_name), "Error loading route points.", e);
         }
         return null;
     }
