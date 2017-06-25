@@ -54,7 +54,5 @@ dependencies {
     compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
 
-    compile 'com.google.maps:google-maps-services:0.1.20'
-
     testCompile 'junit:junit:4.12'
 }
