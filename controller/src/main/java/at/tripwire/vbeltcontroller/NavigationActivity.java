@@ -132,22 +132,27 @@ public class NavigationActivity extends AppCompatActivity {
     };
 
     private void calculateAndPublicize(Location currentLocation) {
-        Location nearestPoint = getNearestPoint(currentLocation);
-        double distance = Utils.distance(currentLocation.getLatitude(), currentLocation.getLongitude(), nearestPoint.getLatitude(), nearestPoint.getLongitude());
-        //actionBroadcaster.publish("left", "10");
+        double distance = getMinDistance(currentLocation);
+
+        int payload = Utils.normalize(distance);
+        Log.i(this.getString(R.string.app_name), "distance: " + distance + ", normalized: " + payload);
+
+        if (payload != -1) {
+            actionBroadcaster.publish("left", String.valueOf(payload));
+        }
     }
 
-    private Location getNearestPoint(Location location) {
+    private double getMinDistance(Location currentLocation) {
         Location nearest = new Location("nearest");
-        double distance = 0;
+        double minDistance = Double.MAX_VALUE;
         for (LatLng point : points) {
-            double tmp = Utils.distance(location.getLatitude(), location.getLongitude(), point.latitude, point.longitude);
-            if (tmp <= distance) {
-                distance = tmp;
-                nearest.setLatitude(point.latitude);
-                nearest.setLongitude(point.longitude);
+            nearest.setLatitude(point.latitude);
+            nearest.setLongitude(point.longitude);
+            double distance = currentLocation.distanceTo(nearest);
+            if (distance < minDistance) {
+                minDistance = distance;
             }
         }
-        return nearest;
+        return minDistance;
     }
 }
