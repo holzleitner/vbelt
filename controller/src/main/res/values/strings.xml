@@ -1,4 +1,8 @@
 <resources>
+    <!-- strings -->
+    <string name="google_maps_web_services_key">AIzaSyB7F1aAIfEPRoAn372QAgdfxuWZZQ9nUM0</string>
+
+    <!-- common strings -->
     <string name="app_name">VBelt-Controller</string>
     <string name="start">Start</string>
     <string name="destination">Destination</string>
