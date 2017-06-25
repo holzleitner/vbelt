@@ -6,8 +6,8 @@ import org.androidannotations.rest.spring.annotations.Rest;
 import org.springframework.http.converter.StringHttpMessageConverter;
 
 @Rest(rootUrl = "https://maps.googleapis.com/maps/api/directions", converters = {StringHttpMessageConverter.class})
-public interface MapsClient {
+public interface RouteClient {
 
     @Get("/json?origin={srcLat},{srcLon}&destination={destLat},{destLon}&mode=bicycling")
-    String getRoutePoints(@Path String srcLat, @Path String srcLon, @Path String destLat, @Path String destLon);
+    String getPoints(@Path String srcLat, @Path String srcLon, @Path String destLat, @Path String destLon);
 }
