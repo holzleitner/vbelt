@@ -40,5 +40,8 @@ dependencies {
     annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
 
+    annotationProcessor "org.androidannotations:rest-spring:$AAVersion"
+    compile "org.androidannotations:rest-spring-api:$AAVersion"
+
     testCompile 'junit:junit:4.12'
 }
