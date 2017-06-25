@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +15,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.androidannotations.annotations.AfterViews;
@@ -30,6 +33,10 @@ public class NavigationActivity extends AppCompatActivity {
 
     public static final String EXTRA_DESTINATION = "at.tripwire.vbeltcontroller.extra.destination";
 
+    private static final long UPDATE_INTERVAL = 1000; // in milliseconds
+
+    private static final long FASTEST_UPDATE_INTERVAL = UPDATE_INTERVAL / 2; // in milliseconds
+
     @ViewById(R.id.location)
     protected TextView locationTextView;
 
@@ -44,6 +51,12 @@ public class NavigationActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationProviderClient;
 
+    private SettingsClient settingsClient;
+
+    private LocationRequest locationRequest;
+
+    private LocationSettingsRequest locationSettingsRequest;
+
     @AfterViews
     protected void init() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
@@ -53,6 +66,16 @@ public class NavigationActivity extends AppCompatActivity {
             }
         }
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        settingsClient = LocationServices.getSettingsClient(this);
+
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(UPDATE_INTERVAL);
+        locationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(locationRequest);
+        locationSettingsRequest = builder.build();
     }
 
     @Override
@@ -60,7 +83,7 @@ public class NavigationActivity extends AppCompatActivity {
         super.onResume();
         // start location updates
         try {
-            fusedLocationProviderClient.requestLocationUpdates(LocationRequest.create(), locationCallback, null);
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             actionBroadcaster.connect();
         } catch (SecurityException e) {
             Log.e(getString(R.string.app_name), "Failed to request the current location.", e);
@@ -109,9 +132,7 @@ public class NavigationActivity extends AppCompatActivity {
             loadRoutePoints(currentLocation);
             updateUI(currentLocation);
 
-            if (actionBroadcaster.isConnected()) {
-                actionBroadcaster.publish("left", "100");
-            }
+            actionBroadcaster.publish("left", "10");
         }
     };
 }
