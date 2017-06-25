@@ -51,6 +51,8 @@ public class NavigationActivity extends AppCompatActivity {
 
     private LocationRequest locationRequest;
 
+    private List<LatLng> points;
+
     @AfterViews
     protected void init() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
@@ -89,12 +91,13 @@ public class NavigationActivity extends AppCompatActivity {
 
     @Background
     protected void loadRoutePoints(Location currentLocation) {
-        List<LatLng> points = routeFacade.getPoints(Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()), "48.2643454", "13.9280544");
-        showPoints(points);
+        points = routeFacade.getPoints(Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()), "48.2643454", "13.9280544");
+        // TODO drop irrelevant points
+        showRoutePoints();
     }
 
     @UiThread
-    protected void showPoints(List<LatLng> points) {
+    protected void showRoutePoints() {
         if (points != null) {
             StringBuilder builder = new StringBuilder();
             for (LatLng p : points) {
@@ -118,10 +121,33 @@ public class NavigationActivity extends AppCompatActivity {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             Location currentLocation = locationResult.getLastLocation();
-            loadRoutePoints(currentLocation);
             updateUI(currentLocation);
 
-            actionBroadcaster.publish("left", "10");
+            if (points == null) {
+                loadRoutePoints(currentLocation);
+            } else {
+                calculateAndPublicize(currentLocation);
+            }
         }
     };
+
+    private void calculateAndPublicize(Location currentLocation) {
+        Location nearestPoint = getNearestPoint(currentLocation);
+        double distance = Utils.distance(currentLocation.getLatitude(), currentLocation.getLongitude(), nearestPoint.getLatitude(), nearestPoint.getLongitude());
+        //actionBroadcaster.publish("left", "10");
+    }
+
+    private Location getNearestPoint(Location location) {
+        Location nearest = new Location("nearest");
+        double distance = 0;
+        for (LatLng point : points) {
+            double tmp = Utils.distance(location.getLatitude(), location.getLongitude(), point.latitude, point.longitude);
+            if (tmp <= distance) {
+                distance = tmp;
+                nearest.setLatitude(point.latitude);
+                nearest.setLongitude(point.longitude);
+            }
+        }
+        return nearest;
+    }
 }
