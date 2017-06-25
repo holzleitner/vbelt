@@ -19,9 +19,7 @@ import org.androidannotations.annotations.ViewById;
 @EActivity(R.layout.activity_navigation)
 public class NavigationActivity extends AppCompatActivity {
 
-    public static final String EXTRA_START = "at.tripwire.vbeltcontroller.extra.start";
-
-    public static final String EXTRA_END = "at.tripwire.vbeltcontroller.extra.end";
+    public static final String EXTRA_DESTINATION = "at.tripwire.vbeltcontroller.extra.destination";
 
     @ViewById(R.id.location)
     protected TextView locationTextView;
@@ -62,7 +60,7 @@ public class NavigationActivity extends AppCompatActivity {
     };
 
     @UiThread
-    private void updateUI(Location location) {
+    protected void updateUI(Location location) {
         locationTextView.setText(location.toString());
     }
 }

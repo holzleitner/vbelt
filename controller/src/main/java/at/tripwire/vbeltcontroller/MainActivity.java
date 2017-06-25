@@ -12,23 +12,18 @@ import org.androidannotations.annotations.ViewById;
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
 
-    @ViewById(R.id.start)
-    protected EditText startEditText;
-
-    @ViewById(R.id.end)
-    protected EditText endEditText;
+    @ViewById(R.id.destination)
+    protected EditText destinationEditText;
 
     @Click(R.id.navigate)
     protected void navigateClicked() {
-        String start = startEditText.getText().toString();
-        String end = endEditText.getText().toString();
-        if (!start.isEmpty() && !end.isEmpty()) {
+        String destination = destinationEditText.getText().toString();
+        if (!destination.isEmpty()) {
             Intent intent = new Intent(this, NavigationActivity_.class);
-            intent.putExtra(NavigationActivity.EXTRA_START, start);
-            intent.putExtra(NavigationActivity.EXTRA_END, end);
+            intent.putExtra(NavigationActivity.EXTRA_DESTINATION, destination);
             startActivity(intent);
         } else {
-            Toast.makeText(this, R.string.fill_out_fields, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.fill_out_destination, Toast.LENGTH_SHORT).show();
         }
     }
 }

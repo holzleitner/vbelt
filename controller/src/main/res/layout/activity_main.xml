@@ -12,10 +12,11 @@
         android:layout_marginTop="8dp">
 
         <EditText
-            android:id="@+id/start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/start" />
+            android:enabled="false"
+            android:text="@string/current_location"
+            android:hint="@string/start"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -26,10 +27,10 @@
         android:layout_marginTop="8dp">
 
         <EditText
-            android:id="@+id/end"
+            android:id="@+id/destination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/end" />
+            android:hint="@string/destination" />
 
     </android.support.design.widget.TextInputLayout>
 
