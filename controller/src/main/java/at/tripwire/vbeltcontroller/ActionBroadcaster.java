@@ -6,15 +6,13 @@ import android.widget.Toast;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class ActionBroadcaster {
@@ -24,17 +22,16 @@ public class ActionBroadcaster {
     @RootContext
     protected Context context;
 
-    private MqttAndroidClient mqttAndroidClient;
+    private MqttClient mqttClient;
 
     public void connect() {
-        mqttAndroidClient = new MqttAndroidClient(context, BROKER_URI, MqttClient.generateClientId());
-        mqttAndroidClient.setCallback(mqttCallback);
-
-        MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
-        mqttConnectOptions.setCleanSession(false);
-
         try {
-            mqttAndroidClient.connect(mqttConnectOptions, mqttActionListener);
+            mqttClient = new MqttClient(BROKER_URI, MqttClient.generateClientId(), new MemoryPersistence());
+            mqttClient.setCallback(mqttCallback);
+
+            MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+            mqttConnectOptions.setCleanSession(false);
+            mqttClient.connect(mqttConnectOptions);
         } catch (MqttException e) {
             String message = context.getString(R.string.failed_to_connect);
             Log.e(context.getString(R.string.app_name), message, e);
@@ -43,22 +40,24 @@ public class ActionBroadcaster {
     }
 
     public void publish(String topic, String payload) {
-        if (mqttAndroidClient != null && mqttAndroidClient.isConnected()) {
+        if (mqttClient != null && mqttClient.isConnected()) {
             try {
-                mqttAndroidClient.publish(topic, payload.getBytes(), 0, false);
+                mqttClient.publish(topic, payload.getBytes(), 0, false);
             } catch (MqttException e) {
                 String message = context.getString(R.string.failed_to_publish);
                 Log.e(context.getString(R.string.app_name), message, e);
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(context, context.getString(R.string.failed_to_publish), Toast.LENGTH_SHORT).show();
         }
     }
 
     public void disconnect() {
-        if (mqttAndroidClient != null && mqttAndroidClient.isConnected()) {
+        if (mqttClient != null && mqttClient.isConnected()) {
             try {
-                mqttAndroidClient.disconnect();
-                mqttAndroidClient = null;
+                mqttClient.disconnect();
+                mqttClient = null;
             } catch (MqttException e) {
                 String message = context.getString(R.string.failed_to_disconnect);
                 Log.e(context.getString(R.string.app_name), message, e);
@@ -68,7 +67,7 @@ public class ActionBroadcaster {
     }
 
     public boolean isConnected() {
-        return mqttAndroidClient != null && mqttAndroidClient.isConnected();
+        return mqttClient != null && mqttClient.isConnected();
     }
 
     private MqttCallback mqttCallback = new MqttCallback() {
@@ -85,20 +84,6 @@ public class ActionBroadcaster {
 
         @Override
         public void deliveryComplete(IMqttDeliveryToken token) {
-        }
-    };
-
-    private IMqttActionListener mqttActionListener = new IMqttActionListener() {
-        @Override
-        public void onSuccess(IMqttToken asyncActionToken) {
-            Toast.makeText(context, R.string.connected, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-            String message = context.getString(R.string.failed_to_connect);
-            Log.e(context.getString(R.string.app_name), message, exception);
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     };
 }
