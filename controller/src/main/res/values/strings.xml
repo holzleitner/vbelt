@@ -6,4 +6,10 @@
     <string name="fill_out_destination">Fill out the destination field!</string>
     <string name="current_location">Current location</string>
     <string name="points">Points</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="failed_to_connect">Failed to connect!</string>
+    <string name="failed_to_disconnect">Failed to disconnect!</string>
+    <string name="failed_to_publish">Failed to publish message!</string>
+    <string name="connection_lost">Connection last…</string>
 </resources>
