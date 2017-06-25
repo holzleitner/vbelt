@@ -20,6 +20,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 def AAVersion = "4.3.1"
@@ -42,6 +49,9 @@ dependencies {
 
     annotationProcessor "org.androidannotations:rest-spring:$AAVersion"
     compile "org.androidannotations:rest-spring-api:$AAVersion"
+
+    compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
+    compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
 
     testCompile 'junit:junit:4.12'
 }
