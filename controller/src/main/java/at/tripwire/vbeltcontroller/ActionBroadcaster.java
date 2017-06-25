@@ -96,7 +96,9 @@ public class ActionBroadcaster {
 
         @Override
         public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-            Toast.makeText(context, R.string.failed_to_connect, Toast.LENGTH_SHORT).show();
+            String message = context.getString(R.string.failed_to_connect);
+            Log.e(context.getString(R.string.app_name), message, exception);
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     };
 }
