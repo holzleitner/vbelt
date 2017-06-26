@@ -1,7 +1,7 @@
 package at.tripwire.vbeltcontroller;
 
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.widget.Toast;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -19,14 +19,14 @@ public class DemoActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         actionBroadcaster.connect();
-        Log.e(this.getString(R.string.app_name), "connect");
+        Toast.makeText(this, "connect", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         actionBroadcaster.disconnect();
-        Log.e(this.getString(R.string.app_name), "disconnect");
+        Toast.makeText(this, "disconnect", Toast.LENGTH_SHORT).show();
     }
 
     @Click(R.id.left_100)
