@@ -1,4 +1,4 @@
-package at.tripwire.vbeltcontroller;
+package at.tripwire.vbeltcontroller.networking;
 
 import android.content.Context;
 import android.util.Log;
@@ -13,6 +13,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
+import at.tripwire.vbeltcontroller.R;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class ActionBroadcaster {

@@ -1,4 +1,4 @@
-package at.tripwire.vbeltcontroller;
+package at.tripwire.vbeltcontroller.routing;
 
 import org.androidannotations.rest.spring.annotations.Get;
 import org.androidannotations.rest.spring.annotations.Path;

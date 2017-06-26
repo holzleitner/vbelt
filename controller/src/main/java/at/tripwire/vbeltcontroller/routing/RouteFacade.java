@@ -1,4 +1,4 @@
-package at.tripwire.vbeltcontroller;
+package at.tripwire.vbeltcontroller.routing;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,6 +14,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import at.tripwire.vbeltcontroller.R;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class RouteFacade {

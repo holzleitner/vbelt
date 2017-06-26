@@ -1,4 +1,4 @@
-package at.tripwire.vbeltcontroller;
+package at.tripwire.vbeltcontroller.utils;
 
 public final class Utils {
 
