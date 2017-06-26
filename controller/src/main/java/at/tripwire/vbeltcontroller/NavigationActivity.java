@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -104,10 +105,20 @@ public class NavigationActivity extends AppCompatActivity {
     @Background
     protected void loadRoutePoints(Location currentLocation) {
         LatLng destination = routeFacade.getCoordinates(getIntent().getStringExtra(EXTRA_DESTINATION));
-        steps = routeFacade.getPoints(
-                Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()),
-                Double.toString(destination.latitude), Double.toString(destination.longitude));
-        showRoutePoints();
+        if (destination != null) {
+            steps = routeFacade.getPoints(
+                    Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()),
+                    Double.toString(destination.latitude), Double.toString(destination.longitude));
+            showRoutePoints();
+        } else {
+            finishActivity();
+        }
+    }
+
+    @UiThread
+    protected void finishActivity() {
+        Toast.makeText(this, R.string.destination_not_found, Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     @UiThread
