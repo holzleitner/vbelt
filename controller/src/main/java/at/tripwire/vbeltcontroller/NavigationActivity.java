@@ -45,6 +45,9 @@ public class NavigationActivity extends AppCompatActivity {
     @ViewById(R.id.steps)
     protected TextView stepsTextView;
 
+    @ViewById(R.id.next_step)
+    protected TextView nextStepTextView;
+
     @Bean
     protected RouteFacade routeFacade;
 
@@ -57,7 +60,7 @@ public class NavigationActivity extends AppCompatActivity {
 
     private List<Step> steps;
 
-    private String nextManeuver = "center";
+    private Step currentStep;
 
     @AfterViews
     protected void init() {
@@ -124,6 +127,11 @@ public class NavigationActivity extends AppCompatActivity {
         locationTextView.setText("latitude: " + location.getLatitude() + ", longitude: " + location.getLongitude());
     }
 
+    @UiThread
+    protected void showNextStep(double distance) {
+        nextStepTextView.setText("distance: " + String.format("%.1f", distance) + "m, maneuver: " + currentStep.getManeuver());
+    }
+
     private LocationCallback locationCallback = new LocationCallback() {
 
         @Override
@@ -143,10 +151,15 @@ public class NavigationActivity extends AppCompatActivity {
         double distance = getMinDistance(currentLocation);
 
         int payload = Utils.normalize(distance);
-        Log.i(this.getString(R.string.app_name), "distance: " + distance + ", normalized: " + payload + ", maneuver: " + nextManeuver);
+        Log.i(this.getString(R.string.app_name), "distance: " + distance + ", normalized: " + payload + ", maneuver: " + currentStep.getManeuver());
+        showNextStep(distance);
+        showRoutePoints();
 
         if (payload != -1) {
-            actionBroadcaster.publish(nextManeuver, String.valueOf(payload));
+            actionBroadcaster.publish(currentStep.getManeuver(), String.valueOf(payload));
+        }
+        if (distance < 5) {
+            steps.remove(currentStep);
         }
     }
 
@@ -159,7 +172,7 @@ public class NavigationActivity extends AppCompatActivity {
             double distance = currentLocation.distanceTo(nearest);
             if (distance < minDistance) {
                 minDistance = distance;
-                nextManeuver = step.getManeuver();
+                currentStep = step;
             }
         }
         return minDistance;

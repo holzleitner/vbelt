@@ -27,6 +27,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:text="@string/next_step"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/next_step"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/steps"
             android:textStyle="bold" />
 

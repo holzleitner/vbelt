@@ -5,6 +5,7 @@
     <string name="navigate">Navigate</string>
     <string name="fill_out_destination">Fill out the destination field!</string>
     <string name="current_location">Current location</string>
+    <string name="next_step">Next step</string>
     <string name="steps">Steps</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
