@@ -12,4 +12,5 @@
     <string name="failed_to_disconnect">Failed to disconnect!</string>
     <string name="failed_to_publish">Failed to publish message!</string>
     <string name="connection_lost">Connection last…</string>
+    <string name="demo">Demo</string>
 </resources>

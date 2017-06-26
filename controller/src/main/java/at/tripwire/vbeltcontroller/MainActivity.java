@@ -26,4 +26,9 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.fill_out_destination, Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Click(R.id.demo)
+    protected void demoClicked() {
+        startActivity(new Intent(this, DemoActivity_.class));
+    }
 }
