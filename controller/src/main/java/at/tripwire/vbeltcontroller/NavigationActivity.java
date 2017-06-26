@@ -15,7 +15,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -26,6 +25,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import at.tripwire.vbeltcontroller.model.Step;
 import at.tripwire.vbeltcontroller.networking.ActionBroadcaster;
 import at.tripwire.vbeltcontroller.routing.RouteFacade;
 import at.tripwire.vbeltcontroller.utils.Utils;
@@ -42,8 +42,8 @@ public class NavigationActivity extends AppCompatActivity {
     @ViewById(R.id.location)
     protected TextView locationTextView;
 
-    @ViewById(R.id.points)
-    protected TextView pointsTextView;
+    @ViewById(R.id.steps)
+    protected TextView stepsTextView;
 
     @Bean
     protected RouteFacade routeFacade;
@@ -55,7 +55,9 @@ public class NavigationActivity extends AppCompatActivity {
 
     private LocationRequest locationRequest;
 
-    private List<LatLng> points;
+    private List<Step> steps;
+
+    private String nextManeuver = "center";
 
     @AfterViews
     protected void init() {
@@ -95,23 +97,25 @@ public class NavigationActivity extends AppCompatActivity {
 
     @Background
     protected void loadRoutePoints(Location currentLocation) {
-        points = routeFacade.getPoints(Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()), "48.2643454", "13.9280544");
-        // TODO drop irrelevant points
+        // TODO get point of interest
+        steps = routeFacade.getPoints(Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()), "48.2643454", "13.9280544");
         showRoutePoints();
     }
 
     @UiThread
     protected void showRoutePoints() {
-        if (points != null) {
+        if (steps != null) {
             StringBuilder builder = new StringBuilder();
-            for (LatLng p : points) {
-                builder.append("latitude: ");
-                builder.append(p.latitude);
-                builder.append(", longitude: ");
-                builder.append(p.longitude);
+            for (Step step : steps) {
+                builder.append(step.getLatitude());
+                builder.append(", ");
+                builder.append(step.getLongitude());
+                builder.append(": ");
+                builder.append(step.getManeuver());
                 builder.append("\n");
             }
-            pointsTextView.setText(builder.toString());
+            Log.i(this.getString(R.string.app_name), "steps: " + builder.toString());
+            stepsTextView.setText(builder.toString());
         }
     }
 
@@ -127,7 +131,7 @@ public class NavigationActivity extends AppCompatActivity {
             Location currentLocation = locationResult.getLastLocation();
             updateUI(currentLocation);
 
-            if (points == null) {
+            if (steps == null) {
                 loadRoutePoints(currentLocation);
             } else {
                 calculateAndPublicize(currentLocation);
@@ -139,22 +143,23 @@ public class NavigationActivity extends AppCompatActivity {
         double distance = getMinDistance(currentLocation);
 
         int payload = Utils.normalize(distance);
-        Log.i(this.getString(R.string.app_name), "distance: " + distance + ", normalized: " + payload);
+        Log.i(this.getString(R.string.app_name), "distance: " + distance + ", normalized: " + payload + ", maneuver: " + nextManeuver);
 
         if (payload != -1) {
-            actionBroadcaster.publish("left", String.valueOf(payload));
+            actionBroadcaster.publish(nextManeuver, String.valueOf(payload));
         }
     }
 
     private double getMinDistance(Location currentLocation) {
         Location nearest = new Location("nearest");
         double minDistance = Double.MAX_VALUE;
-        for (LatLng point : points) {
-            nearest.setLatitude(point.latitude);
-            nearest.setLongitude(point.longitude);
+        for (Step step : steps) {
+            nearest.setLatitude(step.getLatitude());
+            nearest.setLongitude(step.getLongitude());
             double distance = currentLocation.distanceTo(nearest);
             if (distance < minDistance) {
                 minDistance = distance;
+                nextManeuver = step.getManeuver();
             }
         }
         return minDistance;
