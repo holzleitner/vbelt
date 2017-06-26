@@ -168,6 +168,7 @@ public class NavigationActivity extends AppCompatActivity {
         }
         if (distance < 5) {
             steps.remove(currentStep);
+            lastSentDistance = 0;
         }
     }
 
