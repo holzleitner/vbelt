@@ -17,6 +17,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 def AAVersion = "4.3.1"
@@ -31,7 +38,9 @@ dependencies {
     compile 'com.android.support:design:26.+'
 
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2'
-    compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.0.2'
+    compile('org.eclipse.paho:org.eclipse.paho.android.service:1.0.2', {
+        exclude group: 'com.google.android', module: 'support-v4'
+    })
 
     annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
