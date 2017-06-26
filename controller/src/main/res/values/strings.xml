@@ -13,4 +13,16 @@
     <string name="failed_to_publish">Failed to publish message!</string>
     <string name="connection_lost">Connection last…</string>
     <string name="demo">Demo</string>
+    <string name="left_100m">Left 100M</string>
+    <string name="left_50m">Left 50M</string>
+    <string name="left_10m">Left 10M</string>
+    <string name="left_1m">Left 1M</string>
+    <string name="center_100m">Center 100M</string>
+    <string name="center_50m">Center 50M</string>
+    <string name="center_10m">Center 10M</string>
+    <string name="center_1m">Center 1M</string>
+    <string name="right_100m">Right 100M</string>
+    <string name="right_50m">Right 50M</string>
+    <string name="right_10m">Right 10M</string>
+    <string name="right_1m">Right 1M</string>
 </resources>
