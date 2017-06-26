@@ -56,8 +56,12 @@ public class RouteFacade {
                         String maneuver = "center";
                         if (step.has("maneuver")) {
                             maneuver = step.getString("maneuver");
-                            if (maneuver != null && maneuver.startsWith("turn-")) {
-                                maneuver = maneuver.substring(5);
+                            if (maneuver != null) {
+                                if (maneuver.startsWith("turn-slight-")) {
+                                    maneuver = maneuver.substring(12);
+                                } else if (maneuver.startsWith("turn-")) {
+                                    maneuver = maneuver.substring(5);
+                                }
                             }
                         }
                         geoPoints.add(new Step(lat, lng, maneuver));
