@@ -29,6 +29,9 @@
         <activity
             android:name=".NavigationActivity_"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".DemoActivity_"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
