@@ -61,6 +61,8 @@ public class RouteFacade {
                                     maneuver = maneuver.substring(12);
                                 } else if (maneuver.startsWith("turn-")) {
                                     maneuver = maneuver.substring(5);
+                                } else if (maneuver.startsWith("straight")) {
+                                    maneuver = "center";
                                 }
                             }
                         }
