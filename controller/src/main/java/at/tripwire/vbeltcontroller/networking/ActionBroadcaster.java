@@ -68,10 +68,6 @@ public class ActionBroadcaster {
         }
     }
 
-    public boolean isConnected() {
-        return mqttClient != null && mqttClient.isConnected();
-    }
-
     private MqttCallback mqttCallback = new MqttCallback() {
 
         @Override
