@@ -15,6 +15,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -100,8 +101,10 @@ public class NavigationActivity extends AppCompatActivity {
 
     @Background
     protected void loadRoutePoints(Location currentLocation) {
-        // TODO get point of interest
-        steps = routeFacade.getPoints(Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()), "48.2643454", "13.9280544");
+        LatLng destination = routeFacade.getCoordinates(getIntent().getStringExtra(EXTRA_DESTINATION));
+        steps = routeFacade.getPoints(
+                Double.toString(currentLocation.getLatitude()), Double.toString(currentLocation.getLongitude()),
+                Double.toString(destination.latitude), Double.toString(destination.longitude));
         showRoutePoints();
     }
 
@@ -149,8 +152,8 @@ public class NavigationActivity extends AppCompatActivity {
 
     private void calculateAndPublicize(Location currentLocation) {
         double distance = getMinDistance(currentLocation);
-
         int payload = Utils.normalize(distance);
+
         Log.i(this.getString(R.string.app_name), "distance: " + distance + ", normalized: " + payload + ", maneuver: " + currentStep.getManeuver());
         showNextStep(distance);
         showRoutePoints();

@@ -1,7 +1,11 @@
 package at.tripwire.vbeltcontroller.routing;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -10,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +67,21 @@ public class RouteFacade {
             return geoPoints;
         } catch (JSONException e) {
             Log.e(context.getString(R.string.app_name), "Error loading route points.", e);
+        }
+        return null;
+    }
+
+    public LatLng getCoordinates(String address) {
+        Geocoder geocoder = new Geocoder(context);
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses.size() > 0) {
+                double latitude = addresses.get(0).getLatitude();
+                double longitude = addresses.get(0).getLongitude();
+                return new LatLng(latitude, longitude);
+            }
+        } catch (IOException e) {
+            Log.e(context.getString(R.string.app_name), "Failed to get the coordinates.", e);
         }
         return null;
     }
