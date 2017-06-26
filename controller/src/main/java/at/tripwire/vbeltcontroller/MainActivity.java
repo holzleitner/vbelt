@@ -7,9 +7,12 @@ import android.widget.Toast;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_main)
+@OptionsMenu(R.menu.menu_main)
 public class MainActivity extends AppCompatActivity {
 
     @ViewById(R.id.destination)
@@ -27,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Click(R.id.demo)
-    protected void demoClicked() {
+    @OptionsItem(R.id.demo)
+    protected void demoMenuClicked() {
         startActivity(new Intent(this, DemoActivity_.class));
     }
 }
