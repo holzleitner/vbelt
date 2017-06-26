@@ -63,6 +63,8 @@ public class NavigationActivity extends AppCompatActivity {
 
     private Step currentStep;
 
+    private int lastSentDistance = 0;
+
     @AfterViews
     protected void init() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
@@ -159,7 +161,10 @@ public class NavigationActivity extends AppCompatActivity {
         showRoutePoints();
 
         if (payload != -1) {
-            actionBroadcaster.publish(currentStep.getManeuver(), String.valueOf(payload));
+            if (payload != lastSentDistance) {
+                actionBroadcaster.publish(currentStep.getManeuver(), String.valueOf(payload));
+            }
+            lastSentDistance = payload;
         }
         if (distance < 5) {
             steps.remove(currentStep);
